@@ -1,0 +1,13 @@
+name: architecture
+on: [pull_request]
+
+jobs:
+  jasper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version: '1.24' }
+      - run: go build -o jasper ./cmd/jasper
+      # Annotations land inline on the changed lines of the diff.
+      - run: ./jasper check --format github

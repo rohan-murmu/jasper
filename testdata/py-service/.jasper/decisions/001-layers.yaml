@@ -1,0 +1,30 @@
+id: DEC-001
+title: The service is layered
+status: accepted
+origin: authored
+date: 2026-09-17
+
+why: |
+  Request handling, domain logic and persistence change for different reasons
+  and at different rates. When a route reaches straight into the session
+  factory, a schema change becomes an HTTP change and the domain logic has
+  nowhere to live.
+
+brief: |
+  Layers are core < db < services < api. Imports point downward only.
+  Reach the database through app.db's public API, never app.db.session.
+
+enforce:
+  - layers:
+      order:
+        - "app/core/**"
+        - "app/db/**"
+        - "app/services/**"
+        - "app/api/**"
+
+  - public_api:
+      module: "app/db/**"
+      entry: "app/db/__init__.py"
+      message: "import the db package, not its internals"
+
+affects: [api, services, db]

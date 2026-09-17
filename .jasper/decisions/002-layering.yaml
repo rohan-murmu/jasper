@@ -1,0 +1,62 @@
+id: DEC-002
+title: Layers depend downward only
+status: accepted
+origin: authored
+date: 2026-09-16
+
+why: |
+  Jasper's core is a pure function: (repo bytes, decision files) -> findings.
+  That property is what lets the same engine run in a CLI, an MCP server, a CI
+  job and a batch over many repositories without modification.
+
+  The property survives only while the dependency direction does. One import
+  from engine into scan makes the engine impure, and every guarantee above is
+  gone quietly, in a single commit nobody reviews carefully.
+
+brief: |
+  Layers are model < scan/store < engine/facts < service < ports.
+  Imports point downward only. The engine and facts packages are pure: they may
+  not import scan, store, service or os. Ports hold no logic; they call service.
+
+enforce:
+  - no_import:
+      from: "internal/model/**"
+      to: "internal/**"
+      message: "model is the bottom layer and must stay dependency-free"
+
+  - no_import:
+      from: "internal/engine/**"
+      to: "internal/scan/**"
+      message: "the engine is pure — it must never read the filesystem"
+
+  - no_import:
+      from: "internal/engine/**"
+      to: "internal/store/**"
+      message: "the engine is pure — it must never read the filesystem"
+
+  - no_import:
+      from: "internal/engine/**"
+      to: "internal/service/**"
+      message: "layers depend downward only"
+
+  - no_import:
+      from: "internal/facts/**"
+      to: "internal/scan/**"
+      message: "facts are derived from a snapshot, not from disk"
+
+  - no_import:
+      from: "internal/ports/**"
+      to: "internal/scan/**"
+      message: "ports go through service, never straight to the scanner"
+
+  - no_import:
+      from: "internal/ports/**"
+      to: "internal/store/**"
+      message: "ports go through service, never straight to the store"
+
+  - no_cycles:
+      within: "internal/**"
+      depth: 2
+      message: "two packages that import each other cannot be tested apart"
+
+affects: [engine, scan, service, ports]

@@ -1,0 +1,28 @@
+id: DEC-003
+title: No CGO, no runtime dependency
+status: accepted
+origin: authored
+date: 2026-09-16
+
+why: |
+  Jasper runs on every commit, in a pre-commit hook and in CI. It must start in
+  milliseconds and install without a toolchain. A CGO grammar (tree-sitter)
+  would make every cross-compile a build-matrix problem and every install a
+  support ticket.
+
+  The cost is accepted knowingly: TypeScript imports are extracted with a
+  hand-written tokenizer instead of a real parser. The scan.Language seam exists
+  so a single language can be swapped to tree-sitter later without touching
+  anything else.
+
+brief: |
+  Pure Go, no CGO, no third-party parser. Go source is parsed with go/parser
+  from the standard library; other languages get a tokenizer under
+  internal/scan/lang. Keep the direct dependency count near zero.
+
+enforce:
+  - approved_dependencies:
+      allow: ["gopkg.in/yaml.v3"]
+      message: "Jasper ships with almost no dependencies — record a decision first"
+
+affects: [scan]

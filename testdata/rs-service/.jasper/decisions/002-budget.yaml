@@ -1,0 +1,20 @@
+id: DEC-002
+title: Dependencies stay within a budget
+status: accepted
+origin: authored
+date: 2026-09-17
+
+why: |
+  Every direct dependency is a supply-chain entry, an upgrade obligation and a
+  compile-time cost. A budget forces the trade to be made deliberately instead
+  of one crate at a time, where each addition always looks free.
+
+brief: |
+  This service budgets 5 direct dependencies. Adding a sixth means removing
+  one, or superseding this decision with a reason.
+
+enforce:
+  - max_dependencies:
+      count: 5
+
+affects: [build]

@@ -1,0 +1,20 @@
+id: DEC-002
+title: Datastore is PostgreSQL
+status: accepted
+origin: observed
+date: 2026-09-16
+why: |
+  Billing needs transactions across rows. A second datastore arriving quietly
+  splits transactions, backups and on-call knowledge before anyone reviews it.
+brief: |
+  Persistence is PostgreSQL. The pg driver stays behind src/db/**.
+  Another datastore requires superseding this decision.
+enforce:
+  - forbid_dependency:
+      packages: [mongodb, mongoose, mysql2, "@aws-sdk/client-dynamodb"]
+      message: "this project stores data in PostgreSQL"
+  - confine:
+      package: pg
+      to: "src/db/**"
+      message: "the database driver stays behind the db layer"
+affects: [billing, db]

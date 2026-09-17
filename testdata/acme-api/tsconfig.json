@@ -1,0 +1,7 @@
+{
+  // tsconfig is JSON with comments in practice
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { "@/*": ["src/*"] },
+  }
+}

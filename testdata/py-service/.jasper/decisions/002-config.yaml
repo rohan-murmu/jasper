@@ -1,0 +1,23 @@
+id: DEC-002
+title: Configuration is read once, in app.core.config
+status: accepted
+origin: authored
+date: 2026-09-17
+
+why: |
+  Configuration read at the point of use cannot be validated at startup, cannot
+  be defaulted consistently, and turns every new environment variable into a
+  runtime surprise in production rather than a boot failure in CI.
+
+brief: |
+  Read os.environ only in app/core/config.py. Everything else imports the
+  values it needs from there.
+
+enforce:
+  - forbid_text:
+      pattern: "os\\.environ|getenv"
+      in: "app/**"
+      except: ["app/core/**"]
+      message: "read configuration from app.core.config, not the environment"
+
+affects: [core]

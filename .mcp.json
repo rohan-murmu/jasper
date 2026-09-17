@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "jasper": {
+      "command": "go",
+      "args": ["run", "./cmd/jasper", "mcp"],
+      "description": "Jasper — this repo's own architectural decisions, enforced. Uses go run so it works without installing the binary."
+    }
+  }
+}

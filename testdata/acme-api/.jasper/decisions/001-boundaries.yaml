@@ -1,0 +1,19 @@
+id: DEC-001
+title: Identity internals are private
+status: accepted
+origin: observed
+date: 2026-09-16
+why: |
+  Session handling changed three times last quarter and each change broke
+  billing, because billing reached past the public API. Identity owns its own
+  storage format; nobody else gets to know it.
+brief: |
+  Import identity only through src/identity/index.ts. Never from
+  src/identity/internal/**. Need something not exported? Export it in the same PR.
+enforce:
+  - no_import:
+      from: "src/**"
+      to: "src/identity/internal/**"
+      except: "src/identity/**"
+      message: "use the identity public API (src/identity/index.ts)"
+affects: [billing]

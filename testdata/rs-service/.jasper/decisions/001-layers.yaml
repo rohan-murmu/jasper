@@ -1,0 +1,23 @@
+id: DEC-001
+title: The domain does not know about HTTP
+status: accepted
+origin: authored
+date: 2026-09-17
+
+why: |
+  The domain is the part of this service worth keeping. If it imports the HTTP
+  layer, it cannot be tested without a web server, cannot be reused by a job or
+  a CLI, and a change to a response shape becomes a change to business rules.
+
+brief: |
+  Layers are domain < store < api. Imports point downward only.
+  The domain imports nothing from store or api.
+
+enforce:
+  - layers:
+      order:
+        - "src/domain/**"
+        - "src/store/**"
+        - "src/api/**"
+
+affects: [domain, store, api]
