@@ -1,38 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="820" height="392" viewBox="0 0 820 392" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" role="img" aria-label="jasper check output showing two violations">
-  <defs>
-    <linearGradient id="bloom" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#f1c07d" stop-opacity="0.09"/>
-      <stop offset="55%" stop-color="#f1c07d" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
-
-  <rect x="1" y="1" width="818" height="390" rx="12" fill="#0d0c0b" stroke="#2b2622"/>
-  <rect x="1" y="1" width="818" height="220" rx="12" fill="url(#bloom)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="400" viewBox="0 0 820 400" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" role="img" aria-label="jasper check output showing two violations">
+  <!-- hard offset shadow -->
+  <rect x="7" y="7" width="810" height="390" rx="4" fill="#17140f"/>
+  <!-- window -->
+  <rect x="1" y="1" width="810" height="390" rx="4" fill="#fffcf8" stroke="#17140f" stroke-width="2"/>
 
   <!-- title bar -->
-  <path d="M1 13a12 12 0 0 1 12-12h794a12 12 0 0 1 12 12v28H1z" fill="#151311"/>
-  <line x1="1" y1="41" x2="819" y2="41" stroke="#2b2622"/>
-  <circle cx="24" cy="21" r="5" fill="#8a4a44"/>
-  <circle cx="42" cy="21" r="5" fill="#8a6d3f"/>
-  <circle cx="60" cy="21" r="5" fill="#4e6b43"/>
-  <text x="84" y="25" font-size="11" fill="#6f675f">your-project — zsh</text>
+  <path d="M1 5a4 4 0 0 1 4-4h802a4 4 0 0 1 4 4v29H1z" fill="#e8621c"/>
+  <line x1="1" y1="34" x2="811" y2="34" stroke="#17140f" stroke-width="2"/>
+  <text x="16" y="24" font-size="13" font-weight="700" fill="#fffcf8">jasper — check</text>
+  <g stroke="#fffcf8" stroke-width="2" fill="none">
+    <path d="M756 22h9"/>
+    <rect x="773" y="12" width="10" height="10"/>
+    <path d="M791 12l10 10M801 12l-10 10"/>
+  </g>
 
   <g font-size="13">
-    <text x="26" y="74"><tspan fill="#f1c07d">$</tspan> <tspan fill="#ece7e0">jasper check</tspan></text>
+    <text x="20" y="66"><tspan fill="#e8621c" font-weight="700">$</tspan> <tspan fill="#17140f" font-weight="700">jasper check</tspan></text>
 
-    <text x="26" y="112" fill="#e8756a">✗ DEC-001  Identity internals are private</text>
-    <text x="58" y="134" fill="#a39a90">src/billing/invoice.ts:3</text>
-    <text x="82" y="154" fill="#6f675f">imports "@/identity/internal/session" → src/identity/internal/session.ts</text>
-    <text x="82" y="174" fill="#6f675f">use the identity public API (src/identity/index.ts)</text>
-    <text x="58" y="196" fill="#f1c07d">→ Move the shared code behind a public entry point, or record a</text>
-    <text x="70" y="214" fill="#f1c07d">decision that permits this edge.</text>
-    <text x="58" y="236" fill="#6f675f">why → .jasper/decisions/001-boundaries.yaml</text>
+    <text x="20" y="104" fill="#d24a2b" font-weight="700">✗ DEC-001  Identity internals are private</text>
+    <text x="52" y="126" fill="#5a5148">src/billing/invoice.ts:3</text>
+    <text x="76" y="146" fill="#8a7d70">imports "@/identity/internal/session" → src/identity/internal/session.ts</text>
+    <text x="76" y="166" fill="#8a7d70">use the identity public API (src/identity/index.ts)</text>
+    <text x="52" y="188" fill="#e8621c">→ Move the shared code behind a public entry point, or record a</text>
+    <text x="64" y="206" fill="#e8621c">decision that permits this edge.</text>
+    <text x="52" y="228" fill="#8a7d70">why → .jasper/decisions/001-boundaries.yaml</text>
 
-    <text x="26" y="274" fill="#e8756a">✗ DEC-002  Datastore is PostgreSQL</text>
-    <text x="58" y="296" fill="#a39a90">package.json</text>
-    <text x="82" y="316" fill="#6f675f">declared dependency mongoose@^8.5.0</text>
-    <text x="82" y="336" fill="#6f675f">this project stores data in PostgreSQL</text>
-
-    <text x="26" y="368" fill="#a39a90">3 violations · 1 checks passed · 4 files · <tspan fill="#8fbf7a">5ms</tspan></text>
+    <text x="20" y="266" fill="#d24a2b" font-weight="700">✗ DEC-002  Datastore is PostgreSQL</text>
+    <text x="52" y="288" fill="#5a5148">package.json</text>
+    <text x="76" y="308" fill="#8a7d70">declared dependency mongoose@^8.5.0</text>
+    <text x="76" y="328" fill="#8a7d70">this project stores data in PostgreSQL</text>
   </g>
+
+  <!-- status bar -->
+  <line x1="1" y1="356" x2="811" y2="356" stroke="#17140f" stroke-width="2"/>
+  <path d="M1 356h810v31a4 4 0 0 1-4 4H5a4 4 0 0 1-4-4z" fill="#e9cdb6"/>
+  <text x="16" y="377" font-size="12" fill="#5a5148">3 violations · 1 checks passed · 4 files · <tspan fill="#4a9a5c" font-weight="700">5ms</tspan></text>
 </svg>

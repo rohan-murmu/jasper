@@ -1,9 +1,6 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
-  <img src="assets/logo.svg" alt="" width="128">
-</picture>
+<img src="assets/logo.svg" alt="" width="128">
 
 # Jasper
 
@@ -11,11 +8,11 @@
 **Jasper records them, and tells the agent — or the build — when the code stops honoring them.**
 
 
-[![Go 1.24+](https://img.shields.io/badge/Go-1.24%2B-f1c07d?labelColor=1c1917&logo=go&logoColor=f1c07d)](https://go.dev/dl/)
-[![10 checks](https://img.shields.io/badge/checks-10_primitives-f1c07d?labelColor=1c1917)](docs/checks.md)
-[![4 languages](https://img.shields.io/badge/languages-Go_TS_Python_Rust-f1c07d?labelColor=1c1917)](docs/languages.md)
-[![MCP](https://img.shields.io/badge/MCP-7_tools-f1c07d?labelColor=1c1917)](docs/mcp.md)
-[![1 dependency](https://img.shields.io/badge/dependencies-1-8fbf7a?labelColor=1c1917)](go.mod)
+[![Go 1.24+](https://img.shields.io/badge/Go-1.24%2B-e8621c?labelColor=17140f&logo=go&logoColor=f1c07d)](https://go.dev/dl/)
+[![10 checks](https://img.shields.io/badge/checks-10_primitives-e8621c?labelColor=17140f)](docs/checks.md)
+[![4 languages](https://img.shields.io/badge/languages-Go_TS_Python_Rust-e8621c?labelColor=17140f)](docs/languages.md)
+[![MCP](https://img.shields.io/badge/MCP-7_tools-e8621c?labelColor=17140f)](docs/mcp.md)
+[![1 dependency](https://img.shields.io/badge/dependencies-1-4a9a5c?labelColor=17140f)](go.mod)
 
 [**Website**](https://jasper-toolbox.vercel.app/) · [**Install**](#install) · [**Quickstart**](#quickstart) · [**Checks**](docs/checks.md) ·
 [**MCP**](docs/mcp.md) · [**Architecture**](docs/architecture.md) · [**All docs**](docs/)
