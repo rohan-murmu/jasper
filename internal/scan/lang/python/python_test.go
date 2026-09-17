@@ -3,6 +3,7 @@ package python
 import (
 	"os"
 	"path/filepath"
+	"sort"
 	"testing"
 
 	"github.com/rohan/jasper/internal/model"
@@ -238,4 +239,67 @@ func TestParseManifestRejectsNonPackageTokens(t *testing.T) {
 	if name, _ := splitPin("PyYAML"); name != "PyYAML" {
 		t.Errorf("a bare name must survive, got %q", name)
 	}
+}
+
+// A single-line dependencies array must not lose its last entry. The array's
+// closing bracket used to reach the package-name filter attached to the final
+// item ("psycopg2\"]"), which silently dropped it — and dropped everything in a
+// one-dependency array. Every dependency check reads this map, so a miss here
+// is a false negative in exactly the check meant to catch an unapproved
+// package.
+func TestManifestSingleLineArray(t *testing.T) {
+	cases := []struct {
+		name string
+		src  string
+		want []string
+	}{
+		{"three inline", `[project]
+dependencies = ["fastapi", "sqlalchemy", "psycopg2"]`,
+			[]string{"fastapi", "sqlalchemy", "psycopg2"}},
+
+		{"one inline", `[project]
+dependencies = ["requests"]`,
+			[]string{"requests"}},
+
+		{"extras carry their own bracket", `[project]
+dependencies = ["psycopg[binary]>=3.1", "redis"]`,
+			[]string{"psycopg", "redis"}},
+
+		{"multiline still works", `[project]
+dependencies = [
+  "fastapi",
+  "psycopg2",
+]`,
+			[]string{"fastapi", "psycopg2"}},
+
+		{"trailing content after close", `[project]
+dependencies = ["httpx"]  # pinned upstream`,
+			[]string{"httpx"}},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			_, got, err := Lang{}.ParseManifest("pyproject.toml", []byte(c.src))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(got) != len(c.want) {
+				t.Fatalf("got %d dependencies %v, want %d %v", len(got), mapKeys(got), len(c.want), c.want)
+			}
+			for _, w := range c.want {
+				if _, ok := got[w]; !ok {
+					t.Errorf("missing %q (got %v)", w, mapKeys(got))
+				}
+			}
+		})
+	}
+}
+
+func mapKeys(m map[string]string) []string {
+	out := make([]string, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	sort.Strings(out)
+	return out
 }

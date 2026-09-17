@@ -213,3 +213,84 @@ func TestNormalizeBridgesGoStringSlices(t *testing.T) {
 		t.Errorf("packages = %T, want []any — the shape stringList matches", inner["packages"])
 	}
 }
+
+// A repo that is already over budget must not be told that adding one more
+// dependency is fine. The violation gets worse, so the answer is DENIED.
+func TestPreflightCatchesWorseningViolation(t *testing.T) {
+	root := t.TempDir()
+	write(t, root, "package.json",
+		`{"name":"over","dependencies":{"a":"1","b":"1","c":"1","d":"1","e":"1"}}`)
+	write(t, root, ".jasper/jasper.yaml", "version: 1\n")
+	write(t, root, ".jasper/decisions/001-budget.yaml", `id: DEC-001
+title: Dependency budget
+status: accepted
+why: keep the tree auditable
+brief: budget is 3 direct dependencies
+enforce:
+  - max_dependencies:
+      count: 3
+`)
+
+	svc, err := New(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	v, err := svc.CanAddDependency("lodash", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if v.Allowed {
+		t.Fatalf("adding a 6th dependency to a repo already over a budget of 3 was ALLOWED; "+
+			"verdict=%+v", v)
+	}
+	if len(v.Findings) != 1 {
+		t.Errorf("got %d findings, want 1", len(v.Findings))
+	}
+}
+
+// The converse still has to hold: a violation that is untouched by the change
+// must not be reported as introduced, or every answer becomes DENIED and the
+// agent stops asking.
+func TestPreflightIgnoresUnrelatedExistingViolation(t *testing.T) {
+	root := t.TempDir()
+	write(t, root, "package.json", `{"name":"x","dependencies":{"mongoose":"1"}}`)
+	write(t, root, ".jasper/jasper.yaml", "version: 1\n")
+	write(t, root, ".jasper/decisions/001-store.yaml", `id: DEC-001
+title: Datastore is PostgreSQL
+status: accepted
+why: transactions
+brief: PostgreSQL only
+enforce:
+  - forbid_dependency:
+      packages: [mongoose]
+`)
+
+	svc, err := New(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	v, err := svc.CanAddDependency("zod", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !v.Allowed {
+		t.Fatalf("adding an unrelated package should be ALLOWED; verdict=%+v", v)
+	}
+	if v.Existing != 1 {
+		t.Errorf("Existing = %d, want 1 (the pre-existing mongoose violation)", v.Existing)
+	}
+}
+
+// write creates a file and any parent directories, for tests that need a repo
+// shaped differently from the shared fixture.
+func write(t *testing.T, root, rel, body string) {
+	t.Helper()
+	p := filepath.Join(root, filepath.FromSlash(rel))
+	if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(p, []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+}

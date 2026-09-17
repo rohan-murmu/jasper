@@ -87,8 +87,16 @@ func diffFindings(before, after []model.Finding) []model.Finding {
 	return out
 }
 
+// findingKey identifies a finding as the reader sees it, Evidence included.
+//
+// Evidence is what carries the *degree* of a violation, and leaving it out made
+// preflight answer the wrong question for any check that reports one. A repo
+// already over its max_dependencies budget produced the same Message before and
+// after adding another package — only Evidence changed, "5 declared, budget 3"
+// to "6 declared, budget 3" — so the diff saw nothing new and preflight
+// answered ALLOWED to a change that made the violation strictly worse.
 func findingKey(f model.Finding) string {
-	return fmt.Sprintf("%s|%s|%s|%d|%s", f.Decision, f.Rule, f.File, f.Line, f.Message)
+	return fmt.Sprintf("%s|%s|%s|%d|%s|%s", f.Decision, f.Rule, f.File, f.Line, f.Message, f.Evidence)
 }
 
 // CanImport reports whether `from` may import `spec`. The file named by from

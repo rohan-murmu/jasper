@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/rohan/jasper/internal/engine"
 	"github.com/rohan/jasper/internal/model"
 	"github.com/rohan/jasper/internal/service"
 )
@@ -119,9 +120,13 @@ func toolDefs() []obj {
 					},
 					"enforce": obj{
 						"type": "array",
+						// The kinds are read from the registry rather than
+						// listed here. A hand-written list is the same drift
+						// Jasper exists to catch: five checks were added and
+						// the agent kept being told about the original five.
 						"description": "Optional. Each element is a single-key object naming a check " +
-							"kind: no_import, no_cycles, forbid_dependency, approved_dependencies, " +
-							"confine. Example: [{\"confine\": {\"package\": \"pg\", \"to\": \"src/db/**\"}}]. " +
+							"kind: " + strings.Join(engine.Kinds(), ", ") + ". " +
+							"Example: [{\"confine\": {\"package\": \"pg\", \"to\": \"src/db/**\"}}]. " +
 							"Omit for an advisory note. Invalid rules are rejected.",
 						"items": obj{"type": "object"},
 					},

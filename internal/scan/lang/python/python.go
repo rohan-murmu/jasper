@@ -174,7 +174,20 @@ func (Lang) ParseManifest(p string, src []byte) (string, map[string]string, erro
 				line = line[strings.Index(line, "[")+1:]
 			}
 			if inArray {
-				for _, item := range strings.Split(line, ",") {
+				// The closing bracket has to be removed before the line is
+				// split, not merely detected: otherwise the last entry of a
+				// single-line array arrives as `psycopg2"]`, fails the package
+				// name filter, and is dropped without a word. A one-line,
+				// one-dependency array lost every entry that way.
+				//
+				// It only counts outside a string — an extras spec such as
+				// "psycopg[binary]>=3.1" carries a ] of its own.
+				items := line
+				if end := arrayEnd(line); end >= 0 {
+					items = line[:end]
+					inArray = false
+				}
+				for _, item := range strings.Split(items, ",") {
 					item = strings.Trim(strings.TrimSpace(item), `"'`)
 					if item == "" {
 						continue
@@ -182,13 +195,6 @@ func (Lang) ParseManifest(p string, src []byte) (string, map[string]string, erro
 					if name, ver := splitPin(item); name != "" {
 						direct[name] = ver
 					}
-				}
-				// The closing bracket only counts outside a string. An extras
-				// spec such as "psycopg[binary]>=3.1" carries a ] of its own,
-				// and treating that as the end of the array silently drops
-				// every dependency listed after it.
-				if strings.Contains(outsideQuotes(line), "]") {
-					inArray = false
 				}
 				continue
 			}
@@ -215,10 +221,10 @@ func (Lang) ParseManifest(p string, src []byte) (string, map[string]string, erro
 	return "pip", direct, nil
 }
 
-// outsideQuotes blanks the contents of quoted strings so structural characters
-// can be found without a TOML parser.
-func outsideQuotes(line string) string {
-	var b strings.Builder
+// arrayEnd returns the index of the first ] that closes a TOML array, skipping
+// any that sit inside a quoted string, or -1 when the array continues on the
+// next line.
+func arrayEnd(line string) int {
 	var quote byte
 	for i := 0; i < len(line); i++ {
 		c := line[i]
@@ -229,17 +235,17 @@ func outsideQuotes(line string) string {
 			}
 		case c == '"' || c == '\'':
 			quote = c
-		default:
-			b.WriteByte(c)
+		case c == ']':
+			return i
 		}
 	}
-	return b.String()
+	return -1
 }
 
 // pyName is the set of characters PyPI allows in a distribution name. It is
 // applied as a filter, not a parser: the array scanner above hands over
-// whatever sits between two commas, including structural leftovers like a bare
-// "]", and anything that cannot be a package name is dropped here.
+// whatever sits between two commas, and anything that cannot be a package name
+// is dropped here.
 var pyName = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]*$`)
 
 // splitPin separates "requests>=2.31" into name and constraint.

@@ -14,11 +14,25 @@ why: |
   gone quietly, in a single commit nobody reviews carefully.
 
 brief: |
-  Layers are model < scan/store < engine/facts < service < ports.
+  Layers are model+glob < scan/store < engine/facts < service < ports.
   Imports point downward only. The engine and facts packages are pure: they may
   not import scan, store, service or os. Ports hold no logic; they call service.
 
 enforce:
+  # The ordering, in one rule. Without this only the specific pairs listed
+  # below were checked, so internal/scan could import internal/engine — two
+  # layers up — and check still passed.
+  - layers:
+      order:
+        - ["internal/model/**", "internal/glob/**"]
+        - ["internal/scan/**", "internal/store/**"]
+        - ["internal/engine/**", "internal/facts/**"]
+        - "internal/service/**"
+        - "internal/ports/**"
+      message: "layers depend downward only"
+
+  # The rules below are not about direction, which is why `layers` cannot
+  # express them: each forbids a DOWNWARD import that the stack would allow.
   - no_import:
       from: "internal/model/**"
       to: "internal/**"

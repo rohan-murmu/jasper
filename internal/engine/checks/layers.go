@@ -15,7 +15,9 @@ func init() { engine.Register(Layers{}) }
 //
 // It exists because layering expressed as no_import pairs grows as n², and the
 // pairs someone forgets to write are exactly the ones that break. Jasper's own
-// layering was seven no_import rules before this check; it is now one.
+// layering demonstrated it: seven no_import rules named seven pairs, and every
+// pair nobody thought of was unguarded — internal/scan could import
+// internal/engine, two layers up, with check still green.
 //
 //   - layers:
 //     order:
@@ -37,9 +39,10 @@ func init() { engine.Register(Layers{}) }
 // Note what this check cannot express: a constraint that is not about
 // direction. Jasper's own engine must not import scan because the engine must
 // stay pure, not because scan sits above it — and "ports must not skip past
-// service" is a hop rule, not an ordering. Both stay explicit no_import rules
-// in .jasper/decisions/002-layering.yaml. Reach for `layers` when the
-// architecture really is a stack.
+// service" is a hop rule, not an ordering. Both are DOWNWARD imports that a
+// stack permits, so both stay explicit no_import rules alongside the `layers`
+// rule in .jasper/decisions/002-layering.yaml. The two are complements, not
+// alternatives: `layers` guards the direction, no_import guards the rest.
 type Layers struct{}
 
 func (Layers) Kind() string { return "layers" }
