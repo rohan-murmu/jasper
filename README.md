@@ -10,14 +10,14 @@
 **Your coding agent makes architectural decisions every hour.**<br>
 **Jasper records them, and tells the agent — or the build — when the code stops honoring them.**
 
-[![architecture](https://github.com/scythrine05/jasper/actions/workflows/jasper.yml/badge.svg)](https://github.com/scythrine05/jasper/actions/workflows/jasper.yml)
+
 [![Go 1.24+](https://img.shields.io/badge/Go-1.24%2B-f1c07d?labelColor=1c1917&logo=go&logoColor=f1c07d)](https://go.dev/dl/)
 [![10 checks](https://img.shields.io/badge/checks-10_primitives-f1c07d?labelColor=1c1917)](docs/checks.md)
 [![4 languages](https://img.shields.io/badge/languages-Go_TS_Python_Rust-f1c07d?labelColor=1c1917)](docs/languages.md)
 [![MCP](https://img.shields.io/badge/MCP-7_tools-f1c07d?labelColor=1c1917)](docs/mcp.md)
 [![1 dependency](https://img.shields.io/badge/dependencies-1-8fbf7a?labelColor=1c1917)](go.mod)
 
-[**Install**](#install) · [**Quickstart**](#quickstart) · [**Checks**](docs/checks.md) ·
+[**Website**](https://jasper-toolbox.vercel.app/) · [**Install**](#install) · [**Quickstart**](#quickstart) · [**Checks**](docs/checks.md) ·
 [**MCP**](docs/mcp.md) · [**Architecture**](docs/architecture.md) · [**All docs**](docs/)
 
 </div>
@@ -112,7 +112,7 @@ The module is not published yet, so `go install ...@latest` will not resolve.
 From a clone:
 
 ```sh
-git clone https://github.com/scythrine05/jasper.git && cd jasper
+git clone https://github.com/rohan-murmu/jasper.git && cd jasper
 go install ./cmd/jasper          # -> $(go env GOPATH)/bin/jasper
 jasper version
 ```
